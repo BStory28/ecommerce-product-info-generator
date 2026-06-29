@@ -1,0 +1,16 @@
+# Environment
+.env
+.env.local
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyo
+
+# Output
+output/
+
+# OS
+Thumbs.db
+.DS_Store
