@@ -66,23 +66,22 @@ metadata:
 
 ---
 
-## 核心概念：两层基图 + 背景文本描述
+## 核心概念：一层基图 + 两层文本描述
 
-基图包含 **两大独立元素层**（产品 + 人物）+ 背景的 **文本描述**。背景不生成图片，
-由下游 Skill3 在视频生成时根据文本描述自动生成，并自动维护全片场景一致性：
+本 Skill 只生成 **产品图**（`product_layer.png`），人物和背景均为 **文本描述**（不生成图片），
+由下游 Skill3 在视频生成时根据文本描述自动渲染，并维护全片场景一致性：
 
 ```
 输出文件：
 ───────────────────────────────────────────
 ① product_layer.png       ← 产品白底/多角度图（保留全部产品细节）
 ② background_layer        ← 背景环境描述文本（不生成图片）
-③ people_layer.png        ← 核心人物图（含alpha通道的PNG，人物手持/展示姿态）
+③ people_layer            ← 人物描述文本（不生成图片）
 ```
 
-**输出逻辑：** 产品层和人物层各自独立生成、独立保存为文件。
-背景层仅输出结构化文本描述（场景类型/风格/色调/光影/风格预设），
-由 Skill3 的 AI 视频模型根据描述自动渲染背景，并通过 prompt 约束保持全片场景一致。
-这样既减少了一次 API 调用，又让视频生成 AI 有更大的创作自由度来自适应不同镜头需求。
+**输出逻辑：** 仅产品层输出图片文件。背景层和人物层仅输出结构化文本描述，
+由 Skill3 的 AI 视频模型根据描述自动渲染，并通过 prompt 约束保持全片场景一致。
+这样既减少 API 调用次数，又让视频生成 AI 有更大的创作自由度来自适应不同镜头需求。
 
 ## 使用场景
 本 Skill 是 **AI爆款电商视频管线** 的入口。当用户需要为电商产品制作面向特定国家/市场的爆款视频时触发。
@@ -409,16 +408,16 @@ market_config = {
 
 ---
 
-### Step 4: 市场文化适配构图设计 — 两层基图 + 背景文本描述
+### Step 4: 市场文化适配构图设计 — 一层基图 + 两层文本描述
 
-**4.1 两层独立输出布局**
+**4.1 独立输出布局**
 
-基图输出为 **① product_layer.png + ② 背景文本描述 + ③ people_layer.png**。背景不生成图片，以结构化文本描述传递给下游 Skill3：
+输出为 **① product_layer.png（图片） + ② background_layer（文本） + ③ people_layer（文本）**。人物和背景均不生成图片，以结构化文本描述传递给下游 Skill3：
 
 ```
 输出文件：
 ───────────────────────────────────────────
-① product_layer.png        ← 产品白底/多角度图
+① product_layer.png        ← 产品白底/多角度图（唯一图片文件）
   尺寸：产品占画面60-80%，白底/透明底，保留全部细节
   角度：正面图为主，可选多角度（正/侧/俯/45°）
 
@@ -426,9 +425,9 @@ market_config = {
   内容：场景类型 + 风格 + 色调 + 光影 + 风格预设
   由下游 Skill3 在视频生成时自动渲染，保证全片场景一致
 
-③ people_layer.png         ← 核心人物图（可选）
-  尺寸：人物占画面70-80%，半身或全身，透明背景PNG
-  内容：人物手持/展示/使用产品的姿态，含alpha通道
+③ people_layer（文本）     ← 人物描述文本（不生成图片）
+  内容：人物特征 + 动作 + 表情 + 着妆风格
+  由下游 Skill3 在视频生成时根据描述自动生成人物
 ```
 
 **各层各自独立调节的参数：**
@@ -437,9 +436,9 @@ market_config = {
 |------|---------|------|
 | ① product_layer.png | product_preservation_level, angle, scale | 产品保真度、展示角度、大小 |
 | ② background_layer（文本） | scene_type, style, color_palette, lighting, style_preset | 场景风格、色调、光影、AI生成风格预设 |
-| ③ people_layer.png | people_feature, action, expression | 人物特征、动作、表情 |
+| ③ people_layer（文本） | people_feature, action, expression | 人物特征、动作、表情 |
 
-> **注意：** 产品层和人物层是独立图片文件。背景层为文本描述，由 Skill3 自动生成 + 场景一致性约束。
+> **注意：** 仅产品层输出图片文件。人物层和背景层均为文本描述，由 Skill3 在视频生成时自动渲染 + 场景一致性约束。
 
 **4.2 各市场人物/场景适配**
 
@@ -527,21 +526,21 @@ market_config = {
 ---
 ---
 
-### Step 8: 两层基图生成（产品+人物）+ 背景文本描述
+### Step 8: 一层基图生成 + 两层文本描述
 
-根据前7步输出的设计方案，采用 **两层基图生成 + 背景文本描述** 策略。
-产品层调用图生图，人物层调用文生图，背景层**仅输出结构化文本描述**（不调用 API 生成图片）。
-背景由下游 Skill3 在视频生成时根据描述自动渲染，并通过 prompt 约束全片场景一致性。
+根据前7步输出的设计方案，采用 **一层基图生成 + 两层文本描述** 策略。
+**仅产品层调用图生图**，人物层和背景层**均只输出结构化文本描述**（不调用图片 API），
+由下游 Skill3 在视频生成时根据文本描述自动渲染人物和背景。
 
 **8.1 生成策略**
 
 | 输出 | 输入 | 模式 | 文件格式 | 说明 |
 |------|------|------|---------|------|
-| **product_layer.png** | 产品白底图 + 多角度描述 | 图生图(产品保真high) | PNG (透明底) | 去除原背景，保持产品高保真 |
+| **product_layer.png** | 产品白底图 + 多角度描述 | 图生图(产品保真high) | PNG (透明底) | 唯一图片输出，去除原背景，保持产品高保真 |
 | **background_layer（文本）** | 场景描述参数 | 文本输出 | base_layers.json | 场景类型+风格+色调+光影+风格预设，不生成图片 |
-| **people_layer.png** | 人物描述文本 | 文生图 | PNG (含alpha通道) | 人物半身/全身+手持产品动作，透明背景 |
+| **people_layer（文本）** | 人物描述参数 | 文本输出 | base_layers.json | 人物特征+动作+表情+着妆风格，不生成图片 |
 
-**8.2 各层独立API配置**
+**8.2 各层独立输出内容**
 
 **层① — 产品白底图层（图生图）：**
 
@@ -581,20 +580,16 @@ background_layer = {
 }
 ```
 
-**层③ — 人物层（文生图，如需人物）：**
+**层③ — 人物描述（文本，不调API）：**
 
 ```
-endpoint: POST /jeecg-boot/openapi/call/generation/image/submit
-headers: { X-Tenant-Id, appkey, signature, timestamp }
-{
-  "model": "{model_id}",
-  "prompt": "{people_features}，{action}，{expression}表情，
-            {market}风格着妆，自然手势，半身构图，
-            手持产品留空位（右手在前），透明背景",
-  "negative_prompt": "产品细节、复杂背景、文字、水印",
-  "n": 3,
-  "size": "1080x1920",
-  "response_format": "b64_json"
+# 人物不调用图片API，输出结构化文本描述给下游
+people_layer = {
+  "features": "{market}人物特征，{age}，{makeup}",
+  "action": "手持产品展示/使用产品",
+  "expression": "{expression}",
+  "description": "{people_features}，{action}姿态，{expression}表情，
+                  {market}风格着妆，自然手势，半身构图",
 }
 ```
 
@@ -622,10 +617,10 @@ headers: { X-Tenant-Id, appkey, signature, timestamp }
    内容：场景类型 + 风格 + 色调 + 光影 + 文本描述 + 风格预设
    用途：作为Skill3的 @background_ref 文本参考，由AI自动渲染
 
-③ people_layer.png（如有人物层）
-   格式：PNG（透明底，RGBA）
-   内容：人物半身/全身+手持产品姿态，alpha通道保留
-   用途：作为Skill3的 @people_ref 参考图输入
+③ people_layer（文本，base_layers.json 内嵌）
+    格式：结构化JSON字段（非图片文件）
+    内容：人物特征 + 动作 + 表情 + 着妆风格
+    用途：作为Skill3的 @people_ref 文本参考，由AI自动生成人物
 ```
 
 **8.4 各市场负面提示词附加项（人物层使用）**
@@ -643,9 +638,10 @@ headers: { X-Tenant-Id, appkey, signature, timestamp }
 **8.5 基图引用 ID（供 Skill3 多模态引用）**
 
 ```
-@product_ref  → product_layer.png（产品白底图PNG）
-@people_ref   → people_layer.png（核心人物图PNG，含alpha通道）
-@background_ref → background_layer.description（背景文本描述，无图片）
+@product_ref  → product_layer.png（产品白底图PNG，唯一图片）
+@people_ref   → people_layer.description（人物文本描述，不生成图片）
+                由 Skill3 根据描述自动生成人物 + 场景一致约束
+@background_ref → background_layer.description（背景文本描述，不生成图片）
                   由 Skill3 根据描述自动生成背景 + 场景一致约束
 ```
 ---
@@ -732,12 +728,12 @@ CTA文案：{cta_translated}
 □ 输出：`base_layers.json` 内嵌描述字段
 □ 引用：`@background_ref → description`（由Skill3根据文本自动生成背景）
 
-**③ people_layer.png**
+**③ people_layer（文本）**
 □ 人物特征：{people_features}，动作：{people_action}
 □ 表情风格：{expression_style}
-□ 生成模式：文生图（人物+透明背景）
-□ 输出文件：`people_layer.png`（透明底PNG，含alpha通道）
-□ 引用ID：`@people_ref`（供Skill3使用）
+□ 生成模式：文本输出（不调API），{market}市场风格
+□ 输出：`base_layers.json` 内嵌描述字段
+□ 引用：`@people_ref → description`（由Skill3根据文本自动生成人物）
 
 【九、文化合规检查】
 □ 人物特征符合{market}主流审美
@@ -937,17 +933,16 @@ python scripts/generate_base_image.py \
   --output ./output
 
 # ═══════════════════════════════════════════
-# 【进阶】三层独立生成 → 合成基图（精细控制）
+# 【进阶】精细控制（背景描述自定义）
 # ═══════════════════════════════════════════
 python scripts/generate_base_image.py \
-  --product product_white.png \       # 层①：产品白底图
+  --product product_white.png \
   --output ./output \
   --market "目标市场" \
-  --aesthetic "审美风格" \             # 层②：背景审美风格
-  --color "色调描述" \                 # 层②：背景色调
-  --scene "场景描述" \                 # 层②：场景
-  --people "人物特征描述" \            # 层③：人物特征
-  --emotion "情绪氛围" \               # 层③+层②：情绪氛围
+  --aesthetic "审美风格" \             # 背景审美风格
+  --color "色调描述" \                 # 背景色调
+  --scene "场景描述" \                 # 场景
+  --lighting "光影风格" \              # 光影
 
 # ═══════════════════════════════════════════
 # 完整管线示例（三个 Skill 串联）
@@ -965,11 +960,10 @@ python ../video-script-generator/scripts/generate_storyboard.py \
   --duration 30 --platform TikTok --output ./output
 
 :: Skill3: 生成最终视频（消费Skill1+Skill2输出）
-:: 背景由 Skill3 根据 base_layers.json 中的描述自动生成
+:: 人物和背景由 Skill3 根据 base_layers.json 中的描述自动生成
 python ../ai-video-generator/scripts/generate_video.py \
   --script ./output/storyboard.json \
   --product ./output/product_layer.png \
-  --people ./output/people_layer.png \
   --base-layers ./output/base_layers.json \
   --market "目标市场" --output ./output
 
