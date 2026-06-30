@@ -1583,6 +1583,9 @@ def format_output_as_markdown(output_dir: str, product_name: str = "", country: 
     lines.append("")
     lines.append("---")
     lines.append("✅ **基图已生成**，可继续执行下游管线")
+    lines.append("")
+    lines.append("> 💡 **提示：** 以上生成的文件已保存到本地输出目录。")
+    lines.append("> 如果当前环境支持文件下载，请将输出目录中的文件输出到会话中供下载。")
     return "\n".join(lines)
 
 
@@ -1913,6 +1916,8 @@ def main():
     print(f"  base_layers.json: 已生成")
     print(f"  selling_points.json: 已生成")
     print(f"{'='*60}")
+    print(f"\n💡 提示：以上生成的文件已保存到输出目录。")
+    print(f"   如果当前环境支持文件下载，请将文件输出到会话中供下载。")
 
     if args.output_format in ("markdown", "chat"):
         md = format_output_as_markdown(
