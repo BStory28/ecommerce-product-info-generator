@@ -163,7 +163,8 @@ python {baseDir}/scripts/generate_base_image.py --product "./白底图.png" --na
 | │  ├─ `category` | string | 否 | 自动识别 | 产品类目 |
 | │  ├─ `selling_points` | string | 否 | 自动提取 | 商品卖点（原始, 需凝练） |
 | │  ├─ `target_audience` | string | 否 | 自动推断 | 目标人群 |
-| │  └─ `usage_scenario` | string | 否 | 自动推断 | 适用场景 |
+| │  ├─ `usage_scenario` | string | 否 | 自动推断 | 适用场景 |
+| │  └─ `usage_instructions` | string | 否 | — | **产品使用说明**（可选，用户填写后严格参考，纳入卖点并传给Skill2） |
 | └─ `price` | string/number | 否 | — | 福利价格, 如"39.9元"（含货币单位） |
 | `target_country` | string | 否 | `"中国"` | **目标国家** — 精确国家名, 如"日本""泰国""美国" |
 | `target_platform` | string | 否 | 按市场推荐 | **目标平台** — 如"抖音/TikTok/Instagram"等 |
@@ -209,8 +210,11 @@ python {baseDir}/scripts/generate_base_image.py --product "./白底图.png" --na
 | target_market | string | 是 | 目标市场（由 `target_country` 自动映射） | `target_country` 映射 |
 | platform | array | 是 | 目标平台（多选） | `target_platform` 或市场默认 |
 | price | string/number | 否 | 福利价格（可选，需标注货币单位） | `product_catalog.price` |
+| usage_instructions | string | 否 | **产品使用说明** — 用户填写的使用方式/场景说明。若有则严格参考，提炼后纳入 `selling_points.json` 的独立字段 `usage_instructions`，传递给 Skill2。 | 用户额外提供 |
 
 > **注意:** `background_layer` 和 `people_layer` 由AI根据 `target_country` 和 `video_type` 自动推断生成, 无需用户手动填写。用户可以通过 `hook_points` 提示系统需要强调的吸引力方向。
+>
+> **额外说明字段:** `usage_instructions`（产品使用说明）为可选填字段。用户填写时必须严格参考其内容，提炼后写入 `selling_points.json` 的 `usage_instructions` 字段，供 Skill2 消费。Skill3 不涉及此字段。
 
 ## 目标市场定义与语言规则
 
@@ -968,3 +972,37 @@ python ../ai-video-generator/scripts/generate_video.py \
   --people ./output/people_layer.png \
   --base-layers ./output/base_layers.json \
   --market "目标市场" --output ./output
+
+---
+## 管线串联（重要 — AI 执行流程）
+
+本 Skill 是国际化电商视频生成管线的 **第一环节**。执行完成后必须按以下流程操作：
+
+### 执行完成后
+
+1. **告知用户结果**：输出目录、生成文件列表、卖点摘要
+2. **询问是否继续**：
+   > "产品信息已生成，是否继续执行 Skill2（视频脚本生成）？"
+
+### 如果用户选择继续 Skill2
+
+将本 Skill 的输出作为 Skill2 的输入：
+
+```bash
+python {baseDir}/../ecommerce-video-script-generator/scripts/generate_storyboard.py \
+  --product-img "{output_dir}/product_layer.png" \
+  --config "{output_dir}/selling_points.json" \
+  --video-type "{video_type}" \
+  --category "{category}" \
+  --market "{market}" \
+  --duration {duration}
+```
+
+> 关键：`--config` 指向本技能输出的 `selling_points.json`（含 `usage_instructions` 字段），`--product-img` 指向 `product_layer.png`
+
+### 上下游说明
+
+| 方向 | 技能 | 仓库 |
+|------|------|------|
+| ⬆ 上游 | 无（本技能是入口） | — |
+| ⬇ 下游 | `ecommerce-video-script-generator` | `https://github.com/BStory28/ecommerce-video-script-generator` |
