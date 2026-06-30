@@ -1586,8 +1586,23 @@ def format_output_as_markdown(output_dir: str, product_name: str = "", country: 
     return "\n".join(lines)
 
 
+def get_language_info(country: str = "", market: str = "") -> dict:
+    """根据国家名（优先）或市场区域查找语言和文字信息。
+    返回: {"language": "中文", "script": "简体中文", "region": "china"} 或空字典"""
+    ref_path = Path(__file__).parent.parent / "reference" / "languages.json"
+    if not ref_path.is_file():
+        return {}
+    with open(ref_path, "r", encoding="utf-8") as f:
+        ref = json.load(f)
+    if country and country in ref.get("countries", {}):
+        return ref["countries"][country]
+    if market and market in ref.get("regions", {}):
+        return ref["regions"][market]
+    return {}
+
+
 def main():
-    parser = argparse.ArgumentParser(description="aigc.hkttok.com 电商基图生成器（三层合成版）")
+    parser = argparse.ArgumentParser(description="aigc.hkttok.com 电商基图生成器")
 
     parser.add_argument("--folder", "-f", help="产品图片文件夹路径（自动识别白底图）")
     parser.add_argument("--product", "-p", default="", help="层①：产品白底图路径（手动指定，与--folder二选一）")
@@ -1848,9 +1863,14 @@ def main():
     if notes:
         extra_notes = "；".join(notes)
 
+    # 语言/文字信息 — 优先按国家匹配，无则按区域
+    lang_info = get_language_info(country=args.country, market=args.market)
+
     selling_points_data = {
         "产品图": product_path,
         "国家": args.country or args.market,
+        "语言": lang_info.get("language", ""),
+        "文字": lang_info.get("script", ""),
         "视频类型": args.video_type or "",
         "额外说明": extra_notes,
         "商品卖点": {

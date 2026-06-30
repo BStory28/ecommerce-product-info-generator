@@ -1,0 +1,204 @@
+{
+  "countries": {
+    "中国": {
+      "language": "中文",
+      "script": "简体中文",
+      "region": "china"
+    },
+    "中国大陆": {
+      "language": "中文",
+      "script": "简体中文",
+      "region": "china"
+    },
+    "美国": {
+      "language": "英语",
+      "script": "English",
+      "region": "north-america"
+    },
+    "加拿大": {
+      "language": "英语",
+      "script": "English",
+      "region": "north-america"
+    },
+    "英国": {
+      "language": "英语",
+      "script": "English",
+      "region": "europe"
+    },
+    "德国": {
+      "language": "德语",
+      "script": "Deutsch",
+      "region": "europe"
+    },
+    "法国": {
+      "language": "法语",
+      "script": "Français",
+      "region": "europe"
+    },
+    "意大利": {
+      "language": "意大利语",
+      "script": "Italiano",
+      "region": "europe"
+    },
+    "西班牙": {
+      "language": "西班牙语",
+      "script": "Español",
+      "region": "europe"
+    },
+    "葡萄牙": {
+      "language": "葡萄牙语",
+      "script": "Português",
+      "region": "europe"
+    },
+    "日本": {
+      "language": "日语",
+      "script": "日本語",
+      "region": "japan"
+    },
+    "韩国": {
+      "language": "韩语",
+      "script": "한국어",
+      "region": "korea"
+    },
+    "泰国": {
+      "language": "泰语",
+      "script": "ไทย",
+      "region": "southeast-asia"
+    },
+    "越南": {
+      "language": "越南语",
+      "script": "Tiếng Việt",
+      "region": "southeast-asia"
+    },
+    "印度尼西亚": {
+      "language": "印尼语",
+      "script": "Bahasa Indonesia",
+      "region": "southeast-asia"
+    },
+    "菲律宾": {
+      "language": "菲律宾语",
+      "script": "Filipino",
+      "region": "southeast-asia"
+    },
+    "马来西亚": {
+      "language": "马来语",
+      "script": "Bahasa Melayu",
+      "region": "southeast-asia"
+    },
+    "新加坡": {
+      "language": "英语",
+      "script": "English",
+      "region": "southeast-asia"
+    },
+    "巴西": {
+      "language": "葡萄牙语",
+      "script": "Português",
+      "region": "brazil"
+    },
+    "印度": {
+      "language": "印地语",
+      "script": "हिन्दी",
+      "region": "south-asia"
+    },
+    "澳大利亚": {
+      "language": "英语",
+      "script": "English",
+      "region": "oceania"
+    },
+    "俄罗斯": {
+      "language": "俄语",
+      "script": "Русский",
+      "region": "europe"
+    },
+    "墨西哥": {
+      "language": "西班牙语",
+      "script": "Español",
+      "region": "north-america"
+    },
+    "阿根廷": {
+      "language": "西班牙语",
+      "script": "Español",
+      "region": "south-america"
+    },
+    "哥伦比亚": {
+      "language": "西班牙语",
+      "script": "Español",
+      "region": "south-america"
+    },
+    "沙特阿拉伯": {
+      "language": "阿拉伯语",
+      "script": "العربية",
+      "region": "middle-east"
+    },
+    "阿联酋": {
+      "language": "阿拉伯语",
+      "script": "العربية",
+      "region": "middle-east"
+    },
+    "土耳其": {
+      "language": "土耳其语",
+      "script": "Türkçe",
+      "region": "middle-east"
+    },
+    "南非": {
+      "language": "英语",
+      "script": "English",
+      "region": "africa"
+    },
+    "埃及": {
+      "language": "阿拉伯语",
+      "script": "العربية",
+      "region": "middle-east"
+    }
+  },
+  "regions": {
+    "china": {
+      "language": "中文",
+      "script": "简体中文"
+    },
+    "north-america": {
+      "language": "英语",
+      "script": "English"
+    },
+    "europe": {
+      "language": "英语",
+      "script": "English"
+    },
+    "japan": {
+      "language": "日语",
+      "script": "日本語"
+    },
+    "korea": {
+      "language": "韩语",
+      "script": "한국어"
+    },
+    "southeast-asia": {
+      "language": "英语",
+      "script": "English"
+    },
+    "brazil": {
+      "language": "葡萄牙语",
+      "script": "Português"
+    },
+    "south-asia": {
+      "language": "英语",
+      "script": "English"
+    },
+    "oceania": {
+      "language": "英语",
+      "script": "English"
+    },
+    "south-america": {
+      "language": "西班牙语",
+      "script": "Español"
+    },
+    "middle-east": {
+      "language": "阿拉伯语",
+      "script": "العربية"
+    },
+    "africa": {
+      "language": "英语",
+      "script": "English"
+    }
+  }
+}
